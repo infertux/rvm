@@ -3,7 +3,7 @@ rvm:
   - 1.9.3
 install:
   - gem install bashcov -v '>=0.0.6'
-  - gem install tf -v '>=0.4.1'
+  - gem install tf -v '>=0.4.2'
 before_script:
   - rvm alias delete default
   - hash -r
@@ -11,7 +11,7 @@ before_script:
   - rvm-smile
   - git submodule init
   - git submodule update
-script: bashcov --mute -- tf --text rvm-test/fast/* rvm-test-rvm1/*
+script: bashcov -- tf --text rvm-test/fast/* rvm-test-rvm1/*
 notifications:
   irc:
     channels:
