@@ -12,6 +12,8 @@ before_script:
   - git submodule init
   - git submodule update
 script: bashcov -- tf --text rvm-test/fast/* rvm-test-rvm1/*
+after_script:
+  - cat coverage/index.html
 notifications:
   irc:
     channels:
