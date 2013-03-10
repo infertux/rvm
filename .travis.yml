@@ -5,7 +5,6 @@ install:
   - gem install tf -v '>=0.4.2'
   - gem install specific_install
   - gem specific_install -l https://github.com/infertux/bashcov.git
-  - bashcov --version
 before_script:
   - rvm alias delete default
   - hash -r
