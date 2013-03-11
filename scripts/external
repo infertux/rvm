@@ -154,7 +154,7 @@ external_mount()
   )
   ln -nfs "${old_gem_home}" "$rvm_gems_path/$rvm_ruby_string"
 
-  __rvm_bin_script
+  __rvm_generate_wrappers
 
   (
     export rvm_gemset_name=global
@@ -248,6 +248,15 @@ external_propose_name()
       __tmp2="${__tmp2%% *}"
       printf "maglev-${__tmp1}-default_${__tmp2}"
       ;;
+    (topaz[[:space:]]*)
+      __tmp1="${parts#* }"
+      __tmp1="${__tmp1%% *}"
+      __tmp2="${parts#* }"
+      __tmp2="${__tmp2#* }"
+      __tmp2="${__tmp2#* }"
+      __tmp2="${__tmp2%% *}"
+      printf "topaz-${__tmp1}-default_${__tmp2}"
+      ;;
     (rubinius[[:space:]]*)
       __tmp1="${parts#* }"
       __tmp1="${__tmp1%% *}"
@@ -311,7 +320,7 @@ external_import_validate_archive()
   typeset -a downloaded_names path_to_bin_ruby
 
   __rvm_read_lines path_to_bin_ruby < <(
-    __rvm_package_list "$rvm_archives_path/${rvm_ruby_package_file}" | grep "bin/ruby$"
+    __rvm_package_list "$rvm_archives_path/${rvm_ruby_package_file}" | \grep "bin/ruby$"
   )
   __rvm_read_lines downloaded_names < <(
     __rvm_package_list "$rvm_archives_path/${rvm_ruby_package_file}" | awk -F/ '{print $1}' | sort -u
@@ -436,7 +445,7 @@ external_import_setup()
 
   rvm_create_flag=1 __rvm_use
 
-  __rvm_bin_script # environment + wrappers
+  __rvm_generate_wrappers
   __rvm_fix_gcc_path "$rvm_rubies_path"
   __rvm_gemsets_initial
   __rvm_ruby_config_save "$rvm_rubies_path/$rvm_ruby_string/bin/ruby" "$rvm_rubies_path/$rvm_ruby_string/config"
@@ -480,8 +489,8 @@ external_prepare_package()
     if
       (( ${rvm_install_flag:-0} > 0 ))
     then
-      rvm_configure_flags+=( --enable-shared --enable-load-relative --sysconfdir=/etc )
-      __rvm_manage_wrapper install "${rvm_ruby_string}" || return $?
+      rvm_configure_flags+=( --enable-load-relative --sysconfdir=/etc )
+      __rvm_run_wrapper manage install "${rvm_ruby_string}" || return $?
     else
       rvm_error "Ruby ${rvm_ruby_string} does not exist, maybe install first?."
       return 2
@@ -537,7 +546,7 @@ external_prepare_upload()
   then
     printf "%b" "rsync -av --rsh=ssh \"${path_prefix}/\" \"${remote_path}/\"\n"
   else
-    printf "%b" "s\cp \"${local_file}\" \"$remote_shell:$remote_directory/${file_name}\"\n"
+    printf "%b" "scp \"${local_file}\" \"$remote_shell:$remote_directory/${file_name}\"\n"
   fi
   rvm_log "--- rvm/config/remote:"
   printf "%b" "${__remote_file}\n"

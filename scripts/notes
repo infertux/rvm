@@ -97,7 +97,7 @@ $notes_type Notes:
     important_message "
   * WARNING: your RVM loading script \`/etc/profile.d/rvm.sh\` is deprecated
     and causes you to have \`umask g+w\` set in your shell,
-    run \`rvm get head --auto\` again to fix your scripts.
+    run \`rvm get head --auto-dotfiles\` again to fix your scripts.
 "
   fi
 
@@ -190,7 +190,7 @@ $notes_type Notes:
 
   if
     [[ -f /etc/rvmrc && -s /etc/rvmrc ]] &&
-    grep "rvm_configure_env=('LDFLAGS=-L/opt/sm/pkg/active/lib CFLAGS=-I/opt/sm/pkg/active/include CPATH=/opt/sm/pkg/active/include')" /etc/rvmrc >/dev/null
+    \grep "rvm_configure_env=('LDFLAGS=-L/opt/sm/pkg/active/lib CFLAGS=-I/opt/sm/pkg/active/include CPATH=/opt/sm/pkg/active/include')" /etc/rvmrc >/dev/null
   then
     important_message "
   * WARNING: you have 'rvm_configure_env' in /etc/rvmrc, run the following to fix:
@@ -227,15 +227,25 @@ $notes_type Notes:
 "
     fi
   fi
+
+  if
+    [[ -x /usr/local/bin/rvm ]]
+  then
+    important_message "
+  * WARNING: you have '/usr/local/bin/rvm', it's most likely a bug of old installation, in most cases it's safe to remove it:
+
+    rm /usr/local/bin/rvm
+"
+  fi
 } | new_notes | eval "${PAGER:-cat}"
 
 rvm_warn "
 # RVM:  Shell scripts enabling management of multiple ruby environments.
 # RTFM: https://rvm.io/
 # HELP: http://webchat.freenode.net/?channels=rvm (#rvm on irc.freenode.net)
-# Cheatsheet: http://cheat.errtheblog.com/s/rvm/
+# Cheatsheet: http://cheat.errtheblog.com/s/rvm
 # Screencast: http://screencasts.org/episodes/how-to-use-rvm
 "
 
-rvm_log "# In case of any issues read output of 'rvm requirements' and/or 'rvm notes'
+rvm_log "# In case of any issues run 'rvm requirements' or read 'rvm notes'
 "

@@ -186,8 +186,7 @@ __rvm_rvmrc_tools()
   case "$rvmrc_action" in
     create)
       (
-        rvm_ruby_string="${rvmrc_ruby}"
-        rvm_create_flag=1 __rvm_use
+        rvm_create_flag=1 __rvm_use "${rvmrc_ruby}"
         case "${rvmrc_path}" in
           (*/.rvmrc|*/--rvmrc)                 __rvm_set_rvmrc         ;;
           (*/.ruby-version|*/--ruby-version)   __rvm_set_ruby_version  ;;
@@ -458,7 +457,7 @@ __rvm_project_rvmrc()
   done
 
   unset __rvm_project_rvmrc_lock
-  return $?
+  return 1
 }
 
 __rvm_load_project_config()
@@ -672,8 +671,13 @@ if [[ -d \"\${rvm_path:-\$HOME/.rvm}/environments\"
   && -s \"\${rvm_path:-\$HOME/.rvm}/environments/\$environment_id\" ]]
 then
   \\. \"\${rvm_path:-\$HOME/.rvm}/environments/\$environment_id\"
-  [[ -s \"\${rvm_path:-\$HOME/.rvm}/hooks/after_use\" ]] &&
-    \\. \"\${rvm_path:-\$HOME/.rvm}/hooks/after_use\" || true
+  for __hook in \"\${rvm_path:-\$HOME/.rvm}/hooks/after_use\"*
+  do
+    if [[ -f \"\${__hook}\" && -x \"\${__hook}\" && -s \"\${__hook}\" ]]
+    then \\. \"\${__hook}\" || true
+    fi
+  done
+  unset __hook
 " >> .rvmrc
     if [[ " $flags " =~ " use " ]]
     then
