@@ -6,8 +6,7 @@ install:
   - gem update --system
   - gem install bundler --pre
   - gem install tf -v '>=0.4.2'
-  - gem install specific_install
-  - gem specific_install -l https://github.com/infertux/bashcov.git
+  - gem install bashcov -v '~>1.0.0'
 before_script:
   - gem install bundler --pre
   - rvm alias delete default
